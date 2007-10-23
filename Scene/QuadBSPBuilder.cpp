@@ -19,6 +19,14 @@ QuadBSPBuilder::QuadBSPBuilder() {}
 
 QuadBSPBuilder::~QuadBSPBuilder() {}
 
+/**
+ * Build a hybrid quad-bsp tree.
+ *
+ * @see QuadTreeBuilder::Build
+ * @see BSPTreeBuilder::Build
+ *
+ * @param node Tree to build from.
+ */
 QuadNode* QuadBSPBuilder::Build(ISceneNode& node) {
     // build the quad tree
     QuadTreeBuilder builder;

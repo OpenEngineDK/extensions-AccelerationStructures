@@ -118,7 +118,7 @@ void QuadNode::Accept(ISceneNodeVisitor& visitor) {
  * The visiting order starts with the top left and ends at the bottom
  * right and thereafter visits all sub nodes of the node.
  *
- * @param visit Scene visitor.
+ * @param visitor Scene visitor.
  */
 void QuadNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
     list<ISceneNode*>::iterator itr;

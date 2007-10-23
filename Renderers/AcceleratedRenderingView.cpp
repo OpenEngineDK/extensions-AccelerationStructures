@@ -17,6 +17,7 @@ namespace Renderers {
 
 using namespace OpenEngine::Scene;
 
+//! Rendering view constructor.
 AcceleratedRenderingView::AcceleratedRenderingView(Viewport& viewport)
     : IRenderingView(viewport) {
 

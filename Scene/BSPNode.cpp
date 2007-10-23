@@ -215,6 +215,11 @@ FacePtr BSPNode::FindDivider(FaceSet& faces) {
     return *best_face;
 }
 
+/**
+ * Get the dividing face of this node.
+ *
+ * @return Dividing face
+ */
 FacePtr BSPNode::GetDivider() {
     return divider;
 }
