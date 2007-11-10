@@ -21,7 +21,20 @@ BSPNode::BSPNode(BSPNode& node) {
     back = node.back;
     span = node.span;
     divider = node.divider;
-    subNodes = node.subNodes;
+}
+
+ISceneNode* BSPNode::Clone() {
+    BSPNode* clone = new BSPNode(*this);
+    if (front) clone->front = (BSPNode*)front->Clone();
+    if (back) clone->back = (BSPNode*)back->Clone();
+    // @todo this is not nice. we assume that only one sub child
+    // exists and that it is the geometry node we added upon
+    // construction.
+    list<ISceneNode*>::iterator itr = subNodes.begin();
+    ISceneNode* subclone = (*itr)->Clone();
+    clone->AddNode(subclone);
+    clone->span = ((GeometryNode*)subclone)->GetFaceSet();
+    return clone;    
 }
 
 /**

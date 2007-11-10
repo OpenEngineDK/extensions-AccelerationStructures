@@ -104,6 +104,22 @@ QuadNode::~QuadNode() {
 
 }
 
+QuadNode::QuadNode(QuadNode& node) : bb(node.bb) {
+    tl = node.tl;
+    tr = node.tr;
+    bl = node.bl;
+    br = node.br;
+}
+
+ISceneNode* QuadNode::CloneSelf() {
+    QuadNode* clone = new QuadNode(*this);
+    if (tl) clone->tl = (QuadNode*)tl->Clone();
+    if (tr) clone->tr = (QuadNode*)tr->Clone();
+    if (bl) clone->bl = (QuadNode*)bl->Clone();
+    if (br) clone->br = (QuadNode*)br->Clone();
+    return clone;
+}
+
 /**
  * Accept of visitors.
  *

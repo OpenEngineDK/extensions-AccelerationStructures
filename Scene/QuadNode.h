@@ -42,8 +42,10 @@ private:
 
 public:
     QuadNode(FaceSet* faces, const int count, const float hsize);
+    QuadNode(QuadNode& node);
     ~QuadNode();
 
+    ISceneNode* CloneSelf();
     void Accept(ISceneNodeVisitor& visitor);
     void VisitSubNodes(ISceneNodeVisitor& visitor);
 

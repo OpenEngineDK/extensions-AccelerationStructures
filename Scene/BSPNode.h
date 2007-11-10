@@ -39,9 +39,9 @@ protected:
 
 public:
     BSPNode(BSPNode& node);
-    BSPNode(FaceSet* faces);
+    explicit BSPNode(FaceSet* faces);
     ~BSPNode();
-
+    ISceneNode* Clone();
     void Accept(ISceneNodeVisitor& visitor);
     void VisitSubNodes(ISceneNodeVisitor& visitor);
 
