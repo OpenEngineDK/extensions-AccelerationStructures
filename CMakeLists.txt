@@ -6,6 +6,8 @@ ADD_LIBRARY(Extensions_AccelerationStructures
   Scene/BSPNode.cpp
   Scene/BSPTreeBuilder.cpp
   Scene/QuadBSPBuilder.cpp
+  Scene/QuadTransformer.cpp
+  Scene/BSPTransformer.cpp
 )
 
 TARGET_LINK_LIBRARIES(Extensions_AccelerationStructures
