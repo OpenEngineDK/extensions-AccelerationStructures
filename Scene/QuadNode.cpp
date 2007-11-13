@@ -137,6 +137,7 @@ void QuadNode::Accept(ISceneNodeVisitor& visitor) {
  * @param visitor Scene visitor.
  */
 void QuadNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
+    IncAcceptStack();
     list<ISceneNode*>::iterator itr;
     if (tl != NULL) tl->Accept(visitor);
     if (tr != NULL) tr->Accept(visitor);
@@ -144,6 +145,7 @@ void QuadNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
     if (br != NULL) br->Accept(visitor);
     for (itr = subNodes.begin(); itr != subNodes.end(); itr++)
         (*itr)->Accept(visitor);
+    DecAcceptStack();
 }
 
 /**

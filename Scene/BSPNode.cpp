@@ -96,16 +96,15 @@ void BSPNode::Accept(ISceneNodeVisitor& visitor) {
  * @param visitor Current visitor.
  */
 void BSPNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
+    IncAcceptStack();
     list<ISceneNode*>::iterator itr;
-
     if (GetFront() != NULL )
         GetFront()->Accept(visitor);
-
     for (itr = subNodes.begin(); itr != subNodes.end(); itr++)
         (*itr)->Accept(visitor);
-
     if (GetBack() != NULL)
         GetBack()->Accept(visitor);
+    DecAcceptStack();
 }
 
 /**
