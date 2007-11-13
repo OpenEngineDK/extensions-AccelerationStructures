@@ -11,8 +11,6 @@
 #define _QUAD_TREE_BUILDER_H_
 
 #include <Scene/QuadNode.h>
-#include <Scene/ISceneNodeVisitor.h>
-#include <Geometry/FaceSet.h>
 
 namespace OpenEngine {
 namespace Scene {
@@ -55,9 +53,8 @@ using OpenEngine::Geometry::FaceSet;
  *
  * @class QuadTreeBuilder QuadTreeBuilder.h Scene/QuadTree/QuadTreeBuilder.h
  */
-class QuadTreeBuilder : public ISceneNodeVisitor {
+class QuadTreeBuilder {
 private:
-    FaceSet* faces;             //!< collected faces
     int mCount;                 //!< max face count in a leaf node
     float mHSize;               //!< max half size of a leaf node
 
@@ -68,9 +65,6 @@ public:
     QuadNode* Build(ISceneNode& node);
     void SetMaxFaceCount(const int count);
     void SetMaxQuadSize(const float size);
-
-    void VisitGeometryNode(GeometryNode* node);
-
 };
 
 } // NS Scene

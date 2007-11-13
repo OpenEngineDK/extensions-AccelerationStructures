@@ -65,10 +65,11 @@ namespace Scene {
      */
     void QuadTransformer::VisitGeometryNode(GeometryNode *node){
         FaceSet *faces = node->GetFaceSet();
-        
         if (faces->Size() != 0){
             QuadNode *quad = new QuadNode(faces, mCount, mHSize);
             node->GetParent()->ReplaceNode(node, quad);
+        } else {
+            node->GetParent()->DeleteNode(node);
         }
     }
 

@@ -8,8 +8,12 @@
 //--------------------------------------------------------------------
 
 #include <Scene/QuadTreeBuilder.h>
-#include <Scene/TransformationNode.h>
+#include <Scene/QuadTransformer.h>
+//#include <Scene/TransformationNode.h>
 #include <Scene/GeometryNode.h>
+#include <Scene/CollectedGeometryTransformer.h>
+
+#include <iostream>
 
 namespace OpenEngine {
 namespace Scene {
@@ -21,7 +25,7 @@ namespace Scene {
  * @param size Maximum size the bounding square of a quad node may be. [default 10]
  */
 QuadTreeBuilder::QuadTreeBuilder(int count, float size)
-    : faces(NULL), mCount(count), mHSize(size/2) {
+    : mCount(count), mHSize(size/2) {
 
 }
 
@@ -39,21 +43,32 @@ QuadTreeBuilder::~QuadTreeBuilder() {
  * @return Quad tree or NULL if no tree could be built.
  */
 QuadNode* QuadTreeBuilder::Build(ISceneNode& node) {
-    QuadNode* q = NULL;
 
-    // create a face set and collect all faces in the structure.
-    faces = new FaceSet();
-    node.Accept(*this);
+    // create transformers
+    CollectedGeometryTransformer collect;
+    QuadTransformer quad;
+    quad.SetMaxFaceCount(mCount);
+    quad.SetMaxQuadSize(mHSize);
 
-    // create the tree if the set is non-empty.
-    if (faces->Size() != 0)
-        q = new QuadNode(faces, mCount, mHSize);
+    // clone the scene in a new clone container
+    // (needed in case build was called on a geometry node).
+    SceneNode clone;
+    clone.AddNode(node.Clone());
 
-    // clean up
-    delete faces;
+    // transform
+    collect.Transform(clone);
+    quad.Transform(clone);
 
-    // return the tree or NULL
-    return q;
+    // validate
+    QuadNode* qnode = NULL;
+    if (clone.GetNumberOfNodes() == 1) {
+        qnode = dynamic_cast<QuadNode*>(*(clone.subNodes.begin()));
+        clone.RemoveNode(qnode);
+    }
+
+    // clone is deleted when we leave scope so we have nothing to delete.
+
+    return qnode;
 }
 
 /**
@@ -75,15 +90,6 @@ void QuadTreeBuilder::SetMaxFaceCount(const int count) {
  */
 void QuadTreeBuilder::SetMaxQuadSize(const float size) {
     mHSize = size / 2;
-}
-
-/**
- * Build a list of all faces found in the structure.
- *
- * @param node Geometry node.
- */
-void QuadTreeBuilder::VisitGeometryNode(GeometryNode* node) {
-    faces->Add(node->GetFaceSet());
 }
 
 } // NS Scene

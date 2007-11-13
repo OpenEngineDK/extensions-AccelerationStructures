@@ -10,7 +10,7 @@
 #ifndef _QUAD_BSP_TREE_BUILDER_H_
 #define _QUAD_BSP_TREE_BUILDER_H_
 
-#include <Scene/ISceneNodeVisitor.h>
+#include <Scene/QuadNode.h>
 
 namespace OpenEngine {
 namespace Scene {
@@ -23,11 +23,10 @@ class ISceneNode;
  *
  * @class QuadBSPBuilder QuadBSPBuilder.h Scene/QuadBSPBuilder.h
  */
-class QuadBSPBuilder : public ISceneNodeVisitor {
+class QuadBSPBuilder {
 public:
     QuadBSPBuilder();
     ~QuadBSPBuilder();
-    void VisitQuadNode(QuadNode* node);
     QuadNode* Build(ISceneNode& node);
 };
 

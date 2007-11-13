@@ -8,8 +8,8 @@
 //--------------------------------------------------------------------
 
 #include <Scene/BSPTreeBuilder.h>
-#include <Scene/GeometryNode.h>
-#include <Geometry/FaceSet.h>
+#include <Scene/BSPTransformer.h>
+#include <Scene/CollectedGeometryTransformer.h>
 
 namespace OpenEngine {
 namespace Scene {
@@ -17,8 +17,7 @@ namespace Scene {
 /**
  * Construct builder.
  */
-BSPTreeBuilder::BSPTreeBuilder()
-    : faces(NULL) {
+BSPTreeBuilder::BSPTreeBuilder() {
 
 }
 
@@ -30,34 +29,36 @@ BSPTreeBuilder::~BSPTreeBuilder() {
 }
 
 /**
- * Visit handler for geometry nodes.
- * Collects all faces to build the tree from.
- */
-void BSPTreeBuilder::VisitGeometryNode(GeometryNode* node) {
-    faces->Add(node->GetFaceSet());
-    node->VisitSubNodes(*this);
-}
-
-/**
  * Build a BSP tree from a scene structure.
  *
  * @param node Root node of a scene to build from.
  * @return BSP tree or NULL if no tree could be built.
  */
 BSPNode* BSPTreeBuilder::Build(ISceneNode& node) {
-    BSPNode* bsp = NULL;
 
-    // collect all faces
-    faces = new FaceSet();
-    node.Accept(*this);
+    // create transformers
+    CollectedGeometryTransformer collect;
+    BSPTransformer bsp;
 
-    // create a bsp node with the face set if it is non-empty.
-    if (faces->Size() != 0)
-        bsp = new BSPNode(faces);
+    // clone the scene in a new clone container
+    // (needed in case build was called on a geometry node).
+    SceneNode clone;
+    clone.AddNode(node.Clone());
 
-    // clean up and return tree
-    delete faces;
-    return bsp;
+    // transform
+    collect.Transform(clone);
+    bsp.Transform(clone);
+
+    // validate
+    BSPNode* bspnode = NULL;
+    if (clone.GetNumberOfNodes() == 1) {
+        bspnode = dynamic_cast<BSPNode*>(*(clone.subNodes.begin()));
+        clone.RemoveNode(bspnode);
+    }
+
+    // clone is deleted when we leave scope so we have nothing to delete.
+
+    return bspnode;
 }
 
 } // NS Scene

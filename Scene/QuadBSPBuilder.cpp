@@ -8,9 +8,10 @@
 //--------------------------------------------------------------------
 
 #include <Scene/QuadBSPBuilder.h>
-#include <Scene/BSPTreeBuilder.h>
 #include <Scene/QuadNode.h>
-#include <Scene/QuadTreeBuilder.h>
+#include <Scene/CollectedGeometryTransformer.h>
+#include <Scene/QuadTransformer.h>
+#include <Scene/BSPTransformer.h>
 
 namespace OpenEngine {
 namespace Scene {
@@ -28,27 +29,31 @@ QuadBSPBuilder::~QuadBSPBuilder() {}
  * @param node Tree to build from.
  */
 QuadNode* QuadBSPBuilder::Build(ISceneNode& node) {
-    // build the quad tree
-    QuadTreeBuilder builder;
-    QuadNode* quad = builder.Build(node);
-    // accept on quad to boot strap bsp building
-    if (quad!=NULL)
-    quad->Accept(*this);
-    // return the tree
-    return quad;
-}
+    // create transformers
+    CollectedGeometryTransformer collect;
+    QuadTransformer quad;
+    QuadTransformer bsp;
 
-void QuadBSPBuilder::VisitQuadNode(QuadNode* node) {
-    // find quad leafs with geometry
-    if (node->subNodes.size() == 1) {
-        // create and add a BSP tree
-        BSPTreeBuilder builder;
-        node->AddNode(builder.Build(*node));
-        // remove the geometry node
-        node->RemoveNode(*(node->subNodes.begin()));
-        return;
+    // clone the scene in a new clone container
+    // (needed in case build was called on a geometry node).
+    SceneNode clone;
+    clone.AddNode(node.Clone());
+
+    // transform
+    collect.Transform(clone);
+    quad.Transform(clone);
+    bsp.Transform(clone);
+
+    // validate
+    QuadNode* qnode = NULL;
+    if (clone.GetNumberOfNodes() == 1) {
+        qnode = dynamic_cast<QuadNode*>(*(clone.subNodes.begin()));
+        clone.RemoveNode(qnode);
     }
-    node->VisitSubNodes(*this);
+
+    // clone is deleted when we leave scope so we have nothing to delete.
+
+    return qnode;
 }
 
 } // NS Scene

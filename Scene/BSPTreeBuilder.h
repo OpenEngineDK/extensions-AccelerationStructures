@@ -24,16 +24,11 @@ class ISceneNode;
  *
  * @class BSPTreeBuilder BSPTreeBuilder.h Scene/BSPTreeBuilder.h
  */
-class BSPTreeBuilder : public ISceneNodeVisitor {
-private:
-    FaceSet* faces;             //!< collected faces
+class BSPTreeBuilder {
 public:
     BSPTreeBuilder();
     ~BSPTreeBuilder();
-
     BSPNode* Build(ISceneNode& node);
-
-    void VisitGeometryNode(GeometryNode* node);
 };
 
 } // NS Scene
