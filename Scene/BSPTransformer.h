@@ -11,6 +11,8 @@
 #define _OE_BSP_TRANSFORMER_H_
 
 #include <Scene/BSPNode.h>
+#include <Scene/BSPFindDividerStrategy.h>
+#include <Scene/BSPPartitionStrategy.h>
 #include <Scene/GeometryNode.h>
 #include <Scene/ISceneNodeVisitor.h>
 
@@ -24,11 +26,21 @@ namespace Scene {
  */
 class BSPTransformer : public ISceneNodeVisitor {
 private:
+    BSPFindDividerStrategy* findStrategy;
+    BSPPartitionStrategy* partitionStrategy;
 
 public:
     BSPTransformer();
     virtual ~BSPTransformer();
+
     virtual void Transform(ISceneNode& node);
+
+    virtual BSPFindDividerStrategy* GetFindDividerStrategy();
+    virtual void SetFindDividerStrategy(BSPFindDividerStrategy* strategy);
+
+    virtual BSPPartitionStrategy* GetPartitionStrategy();
+    virtual void SetPartitionStrategy(BSPPartitionStrategy* strategy);
+
     virtual void VisitGeometryNode(GeometryNode* node);
 };
 

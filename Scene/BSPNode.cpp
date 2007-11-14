@@ -8,6 +8,7 @@
 //--------------------------------------------------------------------
 
 #include <Scene/BSPNode.h>
+#include <Scene/BSPTransformer.h>
 #include <Scene/GeometryNode.h>
 
 namespace OpenEngine {
@@ -50,7 +51,9 @@ ISceneNode* BSPNode::Clone() {
  * @pre The face set supplied must be non-empty.
  * @param faces Face set to build tree from
  */
-BSPNode::BSPNode(FaceSet* faces) : front(NULL), back(NULL), span(NULL) {
+BSPNode::BSPNode(BSPTransformer& trans, FaceSet* faces)
+    : front(NULL), back(NULL), span(NULL) {
+
     // create face sets
     span = new FaceSet();
     FaceSet* fset = new FaceSet();
@@ -60,16 +63,16 @@ BSPNode::BSPNode(FaceSet* faces) : front(NULL), back(NULL), span(NULL) {
     AddNode(new GeometryNode(span));
 
     // find divider
-    divider = FindDivider(*faces);
+    divider = trans.GetFindDividerStrategy()->FindDivider(*faces, epsilon);
 
-    // split to the sets
-    faces->Split(divider, *fset, *span, *bset, epsilon);
+    // partition to the sets
+    trans.GetPartitionStrategy()->Partition(divider, *faces, *fset, *span, *bset, epsilon);
 
     // create sub nodes
     if (fset->Size() > 0)
-        front = new BSPNode(fset);
+        front = new BSPNode(trans, fset);
     if (bset->Size() > 0)
-        back = new BSPNode(bset);
+        back = new BSPNode(trans, bset);
     
     // delete the unused face sets
     delete fset;
@@ -146,86 +149,6 @@ int BSPNode::ComparePoint(Vector<3,float> point) {
     return GetDivider()->ComparePointPlane(point);
 }
 
-/**
- * Find the best dividing face in the set.
- *
- * This algorithm is based on the choose-dividing-polygon listing
- * found at http://www.devmaster.net/articles/bsp-trees/
- *
- * @pre The face set must be non empty.
- * @param faces Face set to be divided.
- * @return Best dividing face.
- */
-FacePtr BSPNode::FindDivider(FaceSet& faces) {
-    // adjustable constants
-    float relation_minimum = 0.0; // initial minimum balance relation
-    float relation_scale   = 0.5; // scale to lower the relation with
-    // other declarations
-    FaceList::iterator best_face = faces.end();
-    int min_split = faces.Size();
-    float best_rel = 0.0;
-    float cur_rel = 0.0;
-    int no_front, no_back, no_span;
-    FaceList::iterator ftest, fcomp;
-    Vector<3,int> pos;
-    // if the set is empty return
-    if (min_split == 0)
-        throw Exception("Invalid call to find divider with an empty face set.");
-    // if only one element is in the set it as best
-    if (min_split == 1) best_face = faces.begin();
-    // find the best face in the set
-    while (best_face == faces.end()) {
-        for (ftest = faces.begin(); ftest != faces.end(); ftest++) {
-            no_front = no_back = no_span = 0;
-            for (fcomp = faces.begin(); fcomp != faces.end(); fcomp++) {
-                // ignore the face we are testing
-                if (*fcomp == *ftest) continue;
-                // count the face positions
-                pos = (*ftest)->ComparePosition(*fcomp, epsilon);
-                switch (pos.Sum()) {
-                case -3:
-                case -2:
-                    ++no_back; break;
-                case 3:
-                case 2:
-                    ++no_front; break;
-                case -1:
-                    if (pos[0] * pos[1] * pos[2] == 0) ++no_back;
-                    else ++no_span;
-                    break;
-                case 1:
-                    if (pos[0] * pos[1] * pos[2] == 0) ++no_front;
-                    else ++no_span;
-                    break;
-                case 0:
-                    if (pos[0] || pos[1] || pos[2]) ++no_span;
-                    // else it is in the same plane and we don't care
-                    break;
-                }
-                // compute the division relation
-                if (no_front * no_back == 0)
-                    cur_rel = 0;
-                else if (no_front < no_back)
-                    cur_rel = (float)no_front / (float)no_back;
-                else if (no_back < no_front)
-                    cur_rel = (float)no_back / (float)no_front;
-                else
-                    cur_rel = 1;
-                // if the face we are testing is the best seen save it
-                if (cur_rel >= relation_minimum &&
-                    (no_span  < min_split ||
-                     no_span == min_split && cur_rel > best_rel)) {
-                    best_face = ftest;
-                    min_split = no_span;
-                    best_rel  = cur_rel;
-                }
-            }
-        }
-        // lower the scale factor
-        relation_minimum *= relation_scale - .01;
-    }
-    return *best_face;
-}
 
 /**
  * Get the dividing face of this node.

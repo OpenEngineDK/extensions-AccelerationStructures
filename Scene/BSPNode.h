@@ -16,6 +16,9 @@
 namespace OpenEngine {
 namespace Scene {
 
+// forward declarations
+class BSPTransformer;
+
 using namespace OpenEngine::Scene;
 using namespace OpenEngine::Geometry;
 
@@ -30,16 +33,14 @@ static const float epsilon = 0.1f;
 class BSPNode : public SceneNode {
 protected:
 
-    FacePtr    divider;         //!< dividing plane
+    FacePtr  divider;           //!< dividing plane
     BSPNode* front;             //!< link to front node
     BSPNode* back;              //!< link to back node
     FaceSet* span;              //!< faces in dividing plane
 
-    FacePtr FindDivider(FaceSet& faces);
-
 public:
     BSPNode(BSPNode& node);
-    explicit BSPNode(FaceSet* faces);
+    explicit BSPNode(BSPTransformer& trans, FaceSet* faces);
     ~BSPNode();
     ISceneNode* Clone();
     void Accept(ISceneNodeVisitor& visitor);

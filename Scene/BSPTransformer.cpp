@@ -13,21 +13,42 @@ namespace OpenEngine {
 namespace Scene {
 
 BSPTransformer::BSPTransformer() {
-    
+    findStrategy = new BSPDefaultFindDivider();
+    partitionStrategy = new BSPSplitStrategy();
+    //partitionStrategy = new BSPDivideStrategy();
 }
 
 BSPTransformer::~BSPTransformer() {
-    
+    delete findStrategy;
 }
 
 void BSPTransformer::Transform(ISceneNode& node) {
     node.Accept(*this);
 }
 
+BSPFindDividerStrategy* BSPTransformer::GetFindDividerStrategy() {
+    return findStrategy;
+}
+
+void BSPTransformer::SetFindDividerStrategy(BSPFindDividerStrategy* strategy) {
+    delete findStrategy;
+    findStrategy = strategy;
+}
+
+BSPPartitionStrategy* BSPTransformer::GetPartitionStrategy() {
+    return partitionStrategy;
+}
+
+void BSPTransformer::SetPartitionStrategy(BSPPartitionStrategy* strategy) {
+    delete partitionStrategy;
+    partitionStrategy = strategy;
+}
+
 void BSPTransformer::VisitGeometryNode(GeometryNode* node) {
     if (node->GetFaceSet()->Size() != 0)
-        // node->ReplaceBy(new BSPNode(&this, node->GetFaceSet()));
-        node->GetParent()->ReplaceNode(node, new BSPNode(node->GetFaceSet()));
+        node->GetParent()->ReplaceNode(node, new BSPNode(*this, node->GetFaceSet()));
+    else
+        node->GetParent()->RemoveNode(node);
 }
 
 } // NS Scene

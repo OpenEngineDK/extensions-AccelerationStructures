@@ -1,13 +1,15 @@
 
 ADD_LIBRARY(Extensions_AccelerationStructures
-  Renderers/AcceleratedRenderingView.cpp
+  # quad stuff
   Scene/QuadNode.cpp
+  Scene/QuadTransformer.cpp
   Scene/QuadTreeBuilder.cpp
+  # bsp stuff
   Scene/BSPNode.cpp
+  Scene/BSPTransformer.cpp
   Scene/BSPTreeBuilder.cpp
   Scene/QuadBSPBuilder.cpp
-  Scene/QuadTransformer.cpp
-  Scene/BSPTransformer.cpp
+  Renderers/AcceleratedRenderingView.cpp
 )
 
 TARGET_LINK_LIBRARIES(Extensions_AccelerationStructures
