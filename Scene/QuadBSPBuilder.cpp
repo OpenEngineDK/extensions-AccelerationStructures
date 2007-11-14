@@ -32,7 +32,7 @@ QuadNode* QuadBSPBuilder::Build(ISceneNode& node) {
     // create transformers
     CollectedGeometryTransformer collect;
     QuadTransformer quad;
-    QuadTransformer bsp;
+    BSPTransformer bsp;
 
     // clone the scene in a new clone container
     // (needed in case build was called on a geometry node).
