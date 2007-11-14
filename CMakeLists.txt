@@ -8,6 +8,10 @@ ADD_LIBRARY(Extensions_AccelerationStructures
   Scene/BSPNode.cpp
   Scene/BSPTransformer.cpp
   Scene/BSPTreeBuilder.cpp
+  #Scene/BSPFindDividerStrategy.cpp
+  #Scene/BSPPartitionStrategy.cpp
+  # other things
+  Scene/ASDotVisitor.cpp
   Scene/QuadBSPBuilder.cpp
   Renderers/AcceleratedRenderingView.cpp
 )
