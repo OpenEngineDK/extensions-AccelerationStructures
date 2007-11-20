@@ -13,6 +13,10 @@
 #include <Scene/SceneNode.h>
 #include <Geometry/Box.h>
 #include <Geometry/FaceSet.h>
+#include <boost/serialization/base_object.hpp>
+
+#include <boost/serialization/export.hpp>
+
 
 // forward declarations
 namespace OpenEngine {
@@ -40,7 +44,22 @@ private:
     //! sub nodes
     QuadNode *tl, *tr, *bl, *br;
 
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        // serialize base class information
+        ar & boost::serialization::base_object<SceneNode>(*this);
+        ar & bb;
+        ar & tl;
+        ar & tr;
+        ar & bl;
+        ar & br;
+    }
+
+
 public:
+    QuadNode():tl(NULL),tr(NULL),bl(NULL),br(NULL) {}; // empty constructor for serialization
     QuadNode(FaceSet* faces, const int count, const float hsize);
     QuadNode(QuadNode& node);
     ~QuadNode();
@@ -59,5 +78,7 @@ public:
 
 } // NS Scene
 } // NS OpenEngine
+
+BOOST_CLASS_EXPORT(OpenEngine::Scene::QuadNode)
 
 #endif // _QUAD_NODE_H_

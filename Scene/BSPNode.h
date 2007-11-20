@@ -12,6 +12,9 @@
 
 #include <Scene/SceneNode.h>
 #include <Geometry/FaceSet.h>
+#include <boost/serialization/base_object.hpp>
+
+#include <boost/serialization/export.hpp>
 
 namespace OpenEngine {
 namespace Scene {
@@ -31,6 +34,18 @@ static const float epsilon = 0.1f;
  * @class BSPNode BSPNode.h SceneBSPTree/BSPNode.h
  */
 class BSPNode : public SceneNode {
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        // serialize base class information
+        ar & boost::serialization::base_object<SceneNode>(*this);
+        ar & divider;
+        ar & front;
+        ar & back;
+        ar & span;
+    }
+
 protected:
 
     FacePtr  divider;           //!< dividing plane
@@ -39,6 +54,7 @@ protected:
     FaceSet* span;              //!< faces in dividing plane
 
 public:
+    BSPNode() : front(NULL),back(NULL),span(NULL) {};
     BSPNode(BSPNode& node);
     explicit BSPNode(BSPTransformer& trans, FaceSet* faces);
     ~BSPNode();
@@ -56,5 +72,7 @@ public:
 
 } // NS Scene
 } // NS OpenEngine
+
+BOOST_CLASS_EXPORT(OpenEngine::Scene::BSPNode)
 
 #endif // _BSP_NODE_H_
