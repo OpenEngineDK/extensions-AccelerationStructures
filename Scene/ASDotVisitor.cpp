@@ -100,7 +100,14 @@ void ASDotVisitor::VisitBSPNode(BSPNode* node) {
     map<string,string> options;
     options["shape"] = "triangle";
     options["label"] = label.str();
-    VisitNode((ISceneNode*)node, options);
+
+    //VisitNode((ISceneNode*)node, options);
+    
+    int nid = GetId(node);
+    dotdata << "{" << nid << " [";
+    for (map<string,string>::iterator op = options.begin(); op != options.end(); op++)
+        dotdata << op->first << "=\"" << op->second << "\" ";
+    dotdata << "]}";
 
 //     // code for creating the full bsp tree
 //     int name = GetId(node);
