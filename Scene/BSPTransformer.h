@@ -20,7 +20,21 @@ namespace OpenEngine {
 namespace Scene {
 
 /**
- * Short description.
+ * BSP Transformer.
+ *
+ * Converts a scene structure to a one where all Geometry nodes are
+ * converted to BSP trees.
+ *
+ * @code
+ * // first some large scene structure must be available
+ * SceneNode* scene;
+ * // create a transformer
+ * BSPTransformer bspt;
+ * // transform the scene
+ * bspt.Transform(*scene);
+ * @endcode
+ *
+ * @see GeometryNode
  *
  * @class BSPTransformer BSPTransformer.h Scene/BSPTransformer.h
  */

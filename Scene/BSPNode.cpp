@@ -16,6 +16,9 @@ namespace Scene {
 
 /**
  * Copy constructor.
+ * Performs a shallow copy.
+ *
+ * @param node Node to copy.
  */
 BSPNode::BSPNode(BSPNode& node) {
     front = node.front;
@@ -49,7 +52,10 @@ ISceneNode* BSPNode::Clone() {
  * callers responsibility to delete it if necessary.
  *
  * @pre The face set supplied must be non-empty.
+ * @param trans Active construction transformer
  * @param faces Face set to build tree from
+ *
+ * @see BSPTransformer
  */
 BSPNode::BSPNode(BSPTransformer& trans, FaceSet* faces)
     : front(NULL), back(NULL), span(NULL) {

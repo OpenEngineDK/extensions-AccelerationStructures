@@ -104,6 +104,12 @@ QuadNode::~QuadNode() {
 
 }
 
+/**
+ * Copy constructor.
+ * Performs a shallow copy.
+ *
+ * @param node Node to copy.
+ */
 QuadNode::QuadNode(QuadNode& node) : bb(node.bb) {
     tl = node.tl;
     tr = node.tr;

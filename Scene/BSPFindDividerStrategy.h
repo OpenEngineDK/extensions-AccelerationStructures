@@ -1,4 +1,4 @@
-// 
+// Strategies for finding a dividing face for BSP trees.
 // -------------------------------------------------------------------
 // Copyright (C) 2007 OpenEngine.dk (See AUTHORS) 
 // 
@@ -9,10 +9,6 @@
 
 #ifndef _BSP_FIND_DIVIDER_STRATEGY_H_
 #define _BSP_FIND_DIVIDER_STRATEGY_H_
-
-//#include <Math/Math.h>
-//#include <Geometry/FaceSet.h>
-#include <Logging/Logger.h>
 
 namespace OpenEngine {
 namespace Scene {

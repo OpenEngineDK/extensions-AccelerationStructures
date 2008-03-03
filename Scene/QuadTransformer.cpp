@@ -29,8 +29,9 @@ namespace Scene {
     }
     
     /**
-     * Transforms the geometry nodes of a tree into quad nodes.
+     * Transforms the geometry nodes of a tree into quad trees.
      *
+     * @pre The root of the scene to transform may not be of type GeometryNode.
      * @param node Root node of a scene to build from.
      */
     void QuadTransformer::Transform(ISceneNode& node){
