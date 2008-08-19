@@ -110,7 +110,7 @@ QuadNode::~QuadNode() {
  *
  * @param node Node to copy.
  */
-QuadNode::QuadNode(QuadNode& node) : bb(node.bb) {
+QuadNode::QuadNode(QuadNode& node) : SceneNode(node), bb(node.bb) {
     tl = node.tl;
     tr = node.tr;
     bl = node.bl;

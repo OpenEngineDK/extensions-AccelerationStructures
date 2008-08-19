@@ -20,7 +20,7 @@ namespace Scene {
  *
  * @param node Node to copy.
  */
-BSPNode::BSPNode(BSPNode& node) {
+BSPNode::BSPNode(BSPNode& node) : SceneNode(node) {
     front = node.front;
     back = node.back;
     span = node.span;
