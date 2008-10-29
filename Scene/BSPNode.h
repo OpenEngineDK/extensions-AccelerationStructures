@@ -7,22 +7,19 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _BSP_NODE_H_
-#define _BSP_NODE_H_
+#ifndef _OE_BSP_NODE_H_
+#define _OE_BSP_NODE_H_
 
-#include <Scene/SceneNode.h>
+#include <Scene/ISceneNode.h>
 #include <Geometry/FaceSet.h>
-#include <boost/serialization/base_object.hpp>
-
-#include <boost/serialization/export.hpp>
 
 namespace OpenEngine {
 namespace Scene {
 
 // forward declarations
 class BSPTransformer;
+class GeometryNode;
 
-using namespace OpenEngine::Scene;
 using namespace OpenEngine::Geometry;
 
 // Epsilon value defining when a point is in the span of a plane
@@ -33,33 +30,23 @@ static const float epsilon = 0.1f;
  *
  * @class BSPNode BSPNode.h SceneBSPTree/BSPNode.h
  */
-class BSPNode : public SceneNode {
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        // serialize base class information
-        ar & boost::serialization::base_object<SceneNode>(*this);
-        ar & divider;
-        ar & front;
-        ar & back;
-        ar & span;
-    }
+class BSPNode : public ISceneNode {
+    OE_SCENE_NODE(BSPNode, ISceneNode)
 
 protected:
 
-    FacePtr  divider;           //!< dividing plane
+    FacePtr divider;  //!< dividing plane
     BSPNode* front;             //!< link to front node
     BSPNode* back;              //!< link to back node
-    FaceSet* span;              //!< faces in dividing plane
+    FaceSet* span;    //!< faces in dividing plane
+    GeometryNode* sub;          //!< sub node wrapping the divided faces
 
 public:
     BSPNode() : front(NULL),back(NULL),span(NULL) {};
-    BSPNode(BSPNode& node);
+    BSPNode(const BSPNode& node);
     explicit BSPNode(BSPTransformer& trans, FaceSet* faces);
-    ~BSPNode();
-    ISceneNode* Clone();
-    void Accept(ISceneNodeVisitor& visitor);
+    virtual ~BSPNode();
+
     void VisitSubNodes(ISceneNodeVisitor& visitor);
 
     FacePtr  GetDivider();
@@ -68,6 +55,20 @@ public:
     FaceSet* GetSpan();
 
     int ComparePoint(Vector<3,float> point);
+
+private:
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+        // serialize base class information
+        ar & boost::serialization::base_object<ISceneNode>(*this);
+        ar & divider;
+        ar & front;
+        ar & back;
+        ar & span;
+        ar & sub;
+    }
+
 };
 
 } // NS Scene
@@ -75,4 +76,4 @@ public:
 
 BOOST_CLASS_EXPORT(OpenEngine::Scene::BSPNode)
 
-#endif // _BSP_NODE_H_
+#endif // _OE_BSP_NODE_H_

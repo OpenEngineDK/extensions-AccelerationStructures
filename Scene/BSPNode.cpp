@@ -20,25 +20,13 @@ namespace Scene {
  *
  * @param node Node to copy.
  */
-BSPNode::BSPNode(BSPNode& node) : SceneNode(node) {
-    front = node.front;
-    back = node.back;
-    span = node.span;
-    divider = node.divider;
-}
-
-ISceneNode* BSPNode::Clone() {
-    BSPNode* clone = new BSPNode(*this);
-    if (front) clone->front = (BSPNode*)front->Clone();
-    if (back) clone->back = (BSPNode*)back->Clone();
-    // @todo this is not nice. we assume that only one sub child
-    // exists and that it is the geometry node we added upon
-    // construction.
-    list<ISceneNode*>::iterator itr = subNodes.begin();
-    ISceneNode* subclone = (*itr)->Clone();
-    clone->AddNode(subclone);
-    clone->span = ((GeometryNode*)subclone)->GetFaceSet();
-    return clone;    
+BSPNode::BSPNode(const BSPNode& node)
+    : ISceneNode(node)
+{
+    sub  = (GeometryNode*)node.sub->Clone();
+    span = sub->GetFaceSet();
+    if (node.front) front = (BSPNode*)node.front->Clone();
+    if (node.back)  back  = (BSPNode*)node.back->Clone();
 }
 
 /**
@@ -65,8 +53,8 @@ BSPNode::BSPNode(BSPTransformer& trans, FaceSet* faces)
     FaceSet* fset = new FaceSet();
     FaceSet* bset = new FaceSet();
 
-    // add a geometry node with the spanning set    
-    AddNode(new GeometryNode(span));
+    // wrap the spanning set with a geometry node (for traversal)
+    sub = new GeometryNode(span);
 
     // find divider
     divider = trans.GetFindDividerStrategy()->FindDivider(*faces, epsilon);
@@ -92,28 +80,22 @@ BSPNode::~BSPNode() {
 
 }
 
-// accept of visitors
-void BSPNode::Accept(ISceneNodeVisitor& visitor) { 
-    visitor.VisitBSPNode(this);
-}
-
 /**
  * Visit sub nodes including the front and back nodes.
- * The visiting order starts with the front set then all sub nodes and
- * last the back node.
+ * The visiting order starts with the front set, the dividing set as a
+ * geometry node, then all sub nodes and last the back node.
  *
  * @param visitor Current visitor.
  */
 void BSPNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
-    IncAcceptStack();
     list<ISceneNode*>::iterator itr;
     if (GetFront() != NULL )
         GetFront()->Accept(visitor);
+    sub->Accept(visitor);
     for (itr = subNodes.begin(); itr != subNodes.end(); itr++)
         (*itr)->Accept(visitor);
     if (GetBack() != NULL)
         GetBack()->Accept(visitor);
-    DecAcceptStack();
 }
 
 /**

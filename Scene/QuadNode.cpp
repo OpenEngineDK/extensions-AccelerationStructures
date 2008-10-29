@@ -36,8 +36,12 @@ namespace Scene {
  * @param hsize Maximum half size of the bounding square of a leaf node.
  */
 QuadNode::QuadNode(FaceSet* faces, const int count, const float hsize)
-    : bb(Box(*faces)), tl(NULL), tr(NULL), bl(NULL), br(NULL) {
-
+    : bb(Box(*faces))
+    , tl(NULL)
+    , tr(NULL)
+    , bl(NULL)
+    , br(NULL)
+{
     // read out the half sizes on the x and z axis.
     float sizeX = bb.GetCorner()[0];
     float sizeZ = bb.GetCorner()[2];
@@ -106,33 +110,17 @@ QuadNode::~QuadNode() {
 
 /**
  * Copy constructor.
- * Performs a shallow copy.
  *
  * @param node Node to copy.
  */
-QuadNode::QuadNode(QuadNode& node) : SceneNode(node), bb(node.bb) {
-    tl = node.tl;
-    tr = node.tr;
-    bl = node.bl;
-    br = node.br;
-}
-
-ISceneNode* QuadNode::CloneSelf() {
-    QuadNode* clone = new QuadNode(*this);
-    if (tl) clone->tl = (QuadNode*)tl->Clone();
-    if (tr) clone->tr = (QuadNode*)tr->Clone();
-    if (bl) clone->bl = (QuadNode*)bl->Clone();
-    if (br) clone->br = (QuadNode*)br->Clone();
-    return clone;
-}
-
-/**
- * Accept of visitors.
- *
- * @param visitor Scene visitor.
- */
-void QuadNode::Accept(ISceneNodeVisitor& visitor) {
-    visitor.VisitQuadNode(this);
+QuadNode::QuadNode(const QuadNode& node)
+    : ISceneNode(node)
+    , bb(node.bb)
+{
+    if (node.tl) tl = (QuadNode*)node.tl->Clone();
+    if (node.tr) tr = (QuadNode*)node.tr->Clone();
+    if (node.bl) bl = (QuadNode*)node.bl->Clone();
+    if (node.br) br = (QuadNode*)node.br->Clone();
 }
 
 /**
@@ -143,7 +131,6 @@ void QuadNode::Accept(ISceneNodeVisitor& visitor) {
  * @param visitor Scene visitor.
  */
 void QuadNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
-    IncAcceptStack();
     list<ISceneNode*>::iterator itr;
     if (tl != NULL) tl->Accept(visitor);
     if (tr != NULL) tr->Accept(visitor);
@@ -151,7 +138,6 @@ void QuadNode::VisitSubNodes(ISceneNodeVisitor& visitor) {
     if (br != NULL) br->Accept(visitor);
     for (itr = subNodes.begin(); itr != subNodes.end(); itr++)
         (*itr)->Accept(visitor);
-    DecAcceptStack();
 }
 
 /**
