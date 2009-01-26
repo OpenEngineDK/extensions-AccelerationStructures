@@ -103,7 +103,7 @@ public:
                     // if the face we are testing is the best seen save it
                     if (cur_rel >= relation_minimum &&
                         (no_span  < min_split ||
-                         no_span == min_split && cur_rel > best_rel)) {
+                         (no_span == min_split && cur_rel > best_rel))) {
                         best_face = ftest;
                         min_split = no_span;
                         best_rel  = cur_rel;
