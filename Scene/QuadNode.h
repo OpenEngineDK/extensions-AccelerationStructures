@@ -56,23 +56,11 @@ private:
     //! sub nodes
     QuadNode *tl, *tr, *bl, *br;
 
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version) {
-        // serialize base class information
-        ar & boost::serialization::base_object<ISceneNode>(*this);
-        ar & bb;
-        ar & tl;
-        ar & tr;
-        ar & bl;
-        ar & br;
-    }
 
 };
 
 } // NS Scene
 } // NS OpenEngine
 
-BOOST_CLASS_EXPORT(OpenEngine::Scene::QuadNode)
 
 #endif // _QUAD_NODE_H_

@@ -57,23 +57,11 @@ public:
     int ComparePoint(Vector<3,float> point);
 
 private:
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version) {
-        // serialize base class information
-        ar & boost::serialization::base_object<ISceneNode>(*this);
-        ar & divider;
-        ar & front;
-        ar & back;
-        ar & span;
-        ar & sub;
-    }
 
 };
 
 } // NS Scene
 } // NS OpenEngine
 
-BOOST_CLASS_EXPORT(OpenEngine::Scene::BSPNode)
 
 #endif // _OE_BSP_NODE_H_
