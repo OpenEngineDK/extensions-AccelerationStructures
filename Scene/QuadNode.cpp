@@ -9,6 +9,8 @@
 
 #include <Scene/QuadNode.h>
 #include <Scene/GeometryNode.h>
+#include <Resources/IArchiveWriter.h>
+#include <Resources/IArchiveReader.h>
 
 namespace OpenEngine {
 namespace Scene {
@@ -100,6 +102,24 @@ QuadNode::QuadNode(FaceSet* faces, const int count, const float hsize)
     delete fbl;
     delete fbr;
 }
+
+void QuadNode::Serialize(Resources::IArchiveWriter& w) {
+    w.WriteObject("bb", &bb);
+    w.WriteScene("tl",tl);
+    w.WriteScene("tr",tr);
+    w.WriteScene("bl",bl);
+    w.WriteScene("br",br);
+}
+
+void QuadNode::Deserialize(Resources::IArchiveReader& r) {
+    bb = *dynamic_cast<Box*>(r.ReadObject("bb"));
+    tl = dynamic_cast<QuadNode*>(r.ReadScene("tl"));
+    tr = dynamic_cast<QuadNode*>(r.ReadScene("tr"));
+    bl = dynamic_cast<QuadNode*>(r.ReadScene("bl"));
+    br = dynamic_cast<QuadNode*>(r.ReadScene("br"));
+
+}
+
 
 /**
  * Quad node destructor.

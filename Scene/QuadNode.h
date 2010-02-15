@@ -16,6 +16,11 @@
 
 // forward declarations
 namespace OpenEngine {
+    namespace Resources {
+        class IArchiveWriter;
+        class IArchiveReader;
+    }
+
 namespace Scene {
 
 class ISceneNodeVisitor;
@@ -47,6 +52,10 @@ public:
     QuadNode* GetBottomRight() const;
 
     Box GetBoundingBox() const;
+
+    void Serialize(Resources::IArchiveWriter& w);
+    void Deserialize(Resources::IArchiveReader& r);
+
 
 private:
 
