@@ -10,6 +10,8 @@
 #include <Scene/BSPNode.h>
 #include <Scene/BSPTransformer.h>
 #include <Scene/GeometryNode.h>
+#include <Resources/IArchiveWriter.h>
+#include <Resources/IArchiveReader.h>
 
 namespace OpenEngine {
 namespace Scene {
@@ -28,6 +30,57 @@ BSPNode::BSPNode(const BSPNode& node)
     if (node.front) front = (BSPNode*)node.front->Clone();
     if (node.back)  back  = (BSPNode*)node.back->Clone();
 }
+
+void BSPNode::Serialize(Resources::IArchiveWriter& w) {
+    w.WriteObjectPtr("divider",divider);
+    if (front) {
+        w.WriteInt("e",1);
+        front->Serialize(w);
+    }
+    else
+        w.WriteInt("e",0);
+    if (back) {
+        w.WriteInt("e",1);
+        back->Serialize(w);
+    }
+    else
+        w.WriteInt("e",0);
+
+
+    //w.WriteScene("front",front);
+    //w.WriteScene("back",back);
+    
+    w.WriteInt("span",span->Size());
+    for (FaceList::iterator itr = span->begin();
+         itr != span->end();
+         itr++) {
+        w.WriteObjectPtr("face", *itr);
+    }
+
+    w.WriteScene("sub",sub);
+}
+
+void BSPNode::Deserialize(Resources::IArchiveReader& r) {
+    divider = r.ReadObjectPtr<Face>("divider");
+    if (r.ReadInt("e")) {
+        front = new BSPNode();
+        front->Deserialize(r);
+    }
+    if (r.ReadInt("e")) {
+        back = new BSPNode();
+        back->Deserialize(r);
+    }
+    
+    //back = dynamic_cast<BSPNode*>(r.ReadScene("back"));
+
+    span = new FaceSet();
+    size_t len = r.ReadInt("span");
+    while (len--)
+        span->Add(r.ReadObjectPtr<Face>("face"));
+
+    sub = dynamic_cast<GeometryNode*>(r.ReadScene("sub"));
+}
+
 
 /**
  * Create a BSP tree from a face set.

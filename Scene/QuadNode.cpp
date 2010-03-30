@@ -112,7 +112,7 @@ void QuadNode::Serialize(Resources::IArchiveWriter& w) {
 }
 
 void QuadNode::Deserialize(Resources::IArchiveReader& r) {
-    bb = *(r.ReadObject<Box>("bb"));
+    bb = *(r.ReadObject<Box>("bb")); // TODO We are leaking!
     tl = dynamic_cast<QuadNode*>(r.ReadScene("tl"));
     tr = dynamic_cast<QuadNode*>(r.ReadScene("tr"));
     bl = dynamic_cast<QuadNode*>(r.ReadScene("bl"));

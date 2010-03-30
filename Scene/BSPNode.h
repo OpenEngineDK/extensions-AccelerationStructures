@@ -14,6 +14,10 @@
 #include <Geometry/FaceSet.h>
 
 namespace OpenEngine {
+    namespace Resources {
+        class IArchiveWriter;
+        class IArchiveReader;
+    }
 namespace Scene {
 
 // forward declarations
@@ -55,6 +59,10 @@ public:
     FaceSet* GetSpan();
 
     int ComparePoint(Vector<3,float> point);
+
+    void Serialize(Resources::IArchiveWriter& w);
+    void Deserialize(Resources::IArchiveReader& r);
+
 
 private:
 
