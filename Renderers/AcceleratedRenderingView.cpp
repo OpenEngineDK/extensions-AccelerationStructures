@@ -8,6 +8,7 @@
 //--------------------------------------------------------------------
 
 #include <Renderers/AcceleratedRenderingView.h>
+#include <Display/IViewingVolume.h>
 
 #include <Scene/BSPNode.h>
 #include <Scene/QuadNode.h>
@@ -18,17 +19,20 @@ namespace Renderers {
 using namespace OpenEngine::Scene;
 
 //! Rendering view constructor.
-AcceleratedRenderingView::AcceleratedRenderingView(Viewport& viewport)
-    : IRenderingView(viewport) {
-
+AcceleratedRenderingView::AcceleratedRenderingView(){
+    
 }
 
 AcceleratedRenderingView::~AcceleratedRenderingView() {
 
 }
 
+void AcceleratedRenderingView::Handle(RenderingEventArg arg) {
+    this->arg = &arg;
+}
+
 void AcceleratedRenderingView::VisitQuadNode(QuadNode* node) {
-    if (viewport.GetViewingVolume()->IsVisible(node->GetBoundingBox()))
+    if (arg->canvas.GetViewingVolume()->IsVisible(node->GetBoundingBox()))
         node->VisitSubNodes(*this);
 }
 

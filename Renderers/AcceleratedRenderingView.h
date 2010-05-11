@@ -21,10 +21,15 @@ using namespace OpenEngine::Scene;
  * Accelerated rendering view.
  */
 class AcceleratedRenderingView : virtual public IRenderingView {
+private:
+    RenderingEventArg* arg;
 
 public:
-    AcceleratedRenderingView(Viewport& viewport);
+    AcceleratedRenderingView();
     virtual ~AcceleratedRenderingView();
+
+    virtual void Handle(RenderingEventArg arg);
+
     void VisitQuadNode(QuadNode* node);
     void VisitBSPNode(BSPNode* node);
 };
