@@ -10,25 +10,33 @@
 #ifndef _ACCELERATED_RENDERING_VIEW_H_
 #define _ACCELERATED_RENDERING_VIEW_H_
 
-#include <Renderers/IRenderingView.h>
+#include <Scene/ISceneNodeVisitor.h>
 
 namespace OpenEngine {
+    namespace Scene {
+        class BSPNode;
+        class QuadNode;
+    }
+    namespace Display{
+        class IViewingVolume;
+    }
 namespace Renderers {
-
-using namespace OpenEngine::Scene;
+    using Display::IViewingVolume;
+    using Scene::BSPNode;
+    using Scene::QuadNode;
+    using Scene::ISceneNodeVisitor;
 
 /**
  * Accelerated rendering view.
  */
-class AcceleratedRenderingView : virtual public IRenderingView {
+class AcceleratedRenderingView : virtual public ISceneNodeVisitor {
 private:
-    RenderingEventArg* arg;
-
+    IViewingVolume* vv;
 public:
     AcceleratedRenderingView();
     virtual ~AcceleratedRenderingView();
 
-    virtual void Handle(RenderingEventArg arg);
+    void SetViewingVolume(IViewingVolume* vv);
 
     void VisitQuadNode(QuadNode* node);
     void VisitBSPNode(BSPNode* node);

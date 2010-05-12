@@ -17,22 +17,28 @@ namespace OpenEngine {
 namespace Renderers {
 
 using namespace OpenEngine::Scene;
+using namespace OpenEngine::Display;
 
 //! Rendering view constructor.
-AcceleratedRenderingView::AcceleratedRenderingView(){
-    
-}
+AcceleratedRenderingView::AcceleratedRenderingView()
+    : ISceneNodeVisitor(), 
+      vv(NULL)
+{
+}    
+
 
 AcceleratedRenderingView::~AcceleratedRenderingView() {
-
 }
 
-void AcceleratedRenderingView::Handle(RenderingEventArg arg) {
-    this->arg = &arg;
+void AcceleratedRenderingView::SetViewingVolume(IViewingVolume* vv) {
+    this->vv = vv;
 }
 
 void AcceleratedRenderingView::VisitQuadNode(QuadNode* node) {
-    if (arg->canvas.GetViewingVolume()->IsVisible(node->GetBoundingBox()))
+    #ifdef OE_SAFE
+    if (!vv) throw Exception("Accelerated visitor with NULL viewing volume.");
+    #endif
+    if (vv->IsVisible(node->GetBoundingBox()))
         node->VisitSubNodes(*this);
 }
 
