@@ -35,9 +35,9 @@ void AcceleratedRenderingView::SetViewingVolume(IViewingVolume* vv) {
 }
 
 void AcceleratedRenderingView::VisitQuadNode(QuadNode* node) {
-    #ifdef OE_SAFE
+#if OE_SAFE
     if (!vv) throw Exception("Accelerated visitor with NULL viewing volume.");
-    #endif
+#endif
     if (vv->IsVisible(node->GetBoundingBox()))
         node->VisitSubNodes(*this);
 }
